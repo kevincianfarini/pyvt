@@ -7,7 +7,7 @@ install:
   - pip install coveralls
 # command to run tests
 script:
-  python tests --cov=python-vt-api
+  python tests --cov=api
 branches:
   only:
   - master
