@@ -1,0 +1,15 @@
+language: python
+python:
+  - "3.5"
+# command to install dependencies
+install:
+  - pip install -r requirements.txt
+  - pip install coveralls
+# command to run tests
+script:
+  python tests --cov=python-vt-api
+branches:
+  only:
+  - master
+after_success:
+  coveralls
