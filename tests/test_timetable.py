@@ -9,14 +9,16 @@ class TestTimetable(TestCase):
         pass
 
     @patch('requests.post')
-    def test_crn_lookup_simple(self):
+    def test_crn_lookup_simple(self, mock_post):
         pass
 
     def test_crn_lookup_open_only_false(self):
         pass
 
     def test_crn_lookup_invalid_crn(self):
-        pass
+        timetable = Timetable('201701')
+        with self.assertRaises(ValueError):
+            timetable.crn_lookup('1')
 
     @patch('requests.post')
     def test_crn_lookup_raises_timetable_exception(self, mock_post):
@@ -25,6 +27,7 @@ class TestTimetable(TestCase):
         with self.assertRaises(TimetableUnavailableException):
             timetable.crn_lookup('17583')
         self.assertEqual(2, timetable.sleep_time)
+        self.assertNotIn('crn', timetable.base_request)
 
 
 class TestTimetableException(TestCase):

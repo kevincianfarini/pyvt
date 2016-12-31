@@ -11,30 +11,35 @@ from bs4 import BeautifulSoup
 #     'open_only': '',
 #     'BTN_PRESSED': 'FIND class sections'
 # }
-#
-# r = requests.post('https://banweb.banner.vt.edu/ssb/prod/HZSKVTSC.P_ProcRequest', data=request_data)
-# bs = BeautifulSoup(r.content, 'html.parser')
-# print()
+
 
 class Timetable:
-    # TODO get basic functionality working then work on schedule type requests
+
     def __init__(self, term_year):
         self.url = 'https://banweb.banner.vt.edu/ssb/prod/HZSKVTSC.P_ProcRequest'
         self.sleep_time = 1
         self.base_request = {
             'BTN_PRESSED': 'FIND class sections',
             'TERMYEAR': term_year,
-            'CAMPUS': '0' #blacksburg campus
+            'CAMPUS': '0', #blacksburg campus
+            'CORE_CODE': 'AR%',
+            'SCHDTYPE': '%'
         }
 
     def crn_lookup(self, crn_code, open_only=True):
-        request_data = self.base_request
+        if len(crn_code) < 3:
+            raise ValueError('Invalid CRN: must be longer than 3 characters')
+        request_data = self.base_request.copy()
         request_data['crn'] = crn_code
+        request_data['open_only'] = 'on' if open_only else ''
         r = requests.post(self.url, data=request_data)
         if r.status_code != 200:
             self.sleep_time *= 2
-            raise TimetableUnavailableException('The VT Timetable seems to be unavailable at the moment',
+            raise TimetableUnavailableException('The VT Timetable is down or the request was bad.',
                                                 self.sleep_time)
+        bs = BeautifulSoup(r.content, 'html.parser')
+        print(r.text)
+
 
     def class_lookup(self, class_code, open_only=True):
         pass
