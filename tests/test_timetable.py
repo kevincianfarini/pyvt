@@ -1,10 +1,30 @@
 from unittest import TestCase
 from unittest.mock import patch
-from api.timetable import TimetableUnavailableException
+from api.timetable import TimetableUnavailableException, Timetable
 
 
 class TestTimetable(TestCase):
-    pass
+
+    def setUp(self):
+        pass
+
+    @patch('requests.post')
+    def test_crn_lookup_simple(self):
+        pass
+
+    def test_crn_lookup_open_only_false(self):
+        pass
+
+    def test_crn_lookup_invalid_crn(self):
+        pass
+
+    @patch('requests.post')
+    def test_crn_lookup_raises_timetable_exception(self, mock_post):
+        timetable = Timetable('201701')
+        mock_post.return_value.status_code = 404
+        with self.assertRaises(TimetableUnavailableException):
+            timetable.crn_lookup('17583')
+        self.assertEqual(2, timetable.sleep_time)
 
 
 class TestTimetableException(TestCase):
