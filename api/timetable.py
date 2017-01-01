@@ -38,8 +38,7 @@ class Timetable:
             raise TimetableUnavailableException('The VT Timetable is down or the request was bad.',
                                                 self.sleep_time)
         bs = BeautifulSoup(r.content, 'html.parser')
-        print(r.text)
-
+        return self.parse_table(bs.find('table', attrs={'class': 'dataentrytable'}))
 
     def class_lookup(self, class_code, open_only=True):
         pass
@@ -50,6 +49,9 @@ class Timetable:
     def subject_lookup(self, subject_code, open_only=True):
         pass
 
+    def parse_table(self, table):
+        rows = [row for row in table.find_all('tr') if row.attrs == {}]
+        return rows if len(rows) > 1 else rows[0]
 
 class TimetableUnavailableException(Exception):
 

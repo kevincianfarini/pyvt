@@ -12,6 +12,10 @@ class TestTimetable(TestCase):
     def test_crn_lookup_simple(self, mock_post):
         pass
 
+    # def test_test(self):
+    #     timetable = Timetable('201701')
+    #     timetable.crn_lookup('17583', False)
+
     def test_crn_lookup_open_only_false(self):
         pass
 
@@ -28,6 +32,9 @@ class TestTimetable(TestCase):
             timetable.crn_lookup('17583')
         self.assertEqual(2, timetable.sleep_time)
         self.assertNotIn('crn', timetable.base_request)
+
+    def test_parse_table_single_entry(self):
+        pass
 
 
 class TestTimetableException(TestCase):
