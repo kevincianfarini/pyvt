@@ -1,5 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
+from api.section import Section
 # request_data = {
 #     'TERMYEAR': '201701',
 #     'CAMPUS': '0',
@@ -25,6 +26,8 @@ class Timetable:
             'CORE_CODE': 'AR%',
             'SCHDTYPE': '%'
         }
+        self.data_keys = ['crn', 'code', 'name', 'lecture_type', 'credits', 'capaciy',
+                          'instructor', 'days', 'start_time', 'end_time', 'location', 'exam_type']
 
     def crn_lookup(self, crn_code, open_only=True):
         if len(crn_code) < 3:
@@ -49,9 +52,16 @@ class Timetable:
     def subject_lookup(self, subject_code, open_only=True):
         pass
 
+    def parse_row(self, row):
+        entries = [entry.text.replace('\n', '').replace(' ', '').replace('-', ' ') for entry in row.find_all('td')]
+        return Section(**dict(zip(self.data_keys, entries)))
+
     def parse_table(self, table):
         rows = [row for row in table.find_all('tr') if row.attrs == {}]
-        return rows if len(rows) > 1 else rows[0]
+        sections = [self.parse_row(c) for c in rows]
+        print(rows)
+        return sections if len(sections) > 1 else sections[0]
+
 
 class TimetableUnavailableException(Exception):
 
