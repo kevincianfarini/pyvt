@@ -1,6 +1,6 @@
 from unittest import TestCase
 from unittest.mock import patch
-from api.timetable import TimetableUnavailableException, Timetable
+from api.timetable import TimetableError, Timetable
 from bs4 import BeautifulSoup
 from api.section import Section
 
@@ -14,12 +14,19 @@ class TestTimetable(TestCase):
     def test_crn_lookup_simple(self, mock_post):
         pass
 
-    def test_test(self):
-        timetable = Timetable('201701')
-        timetable.crn_lookup('17583', False)
+    # def test_test(self):
+    #     timetable = Timetable('201701')
+    #     timetable.crn_lookup('17583')
 
-    def test_crn_lookup_open_only_false(self):
-        pass
+    @patch('requests.post')
+    @patch('api.timetable.Timetable.parse_table')
+    def test_crn_lookup_open_only_false(self, mock_parse, mock_post):
+        timetable = Timetable('201701')
+        with open('../test_data/test_crn_request_open_only_false.html', 'r') as file:
+            mock_post.return_value.status_code = 200
+            mock_post.return_value.content = file.read()
+            timetable.crn_lookup('17583', False)
+            mock_parse.assert_called_once()
 
     def test_crn_lookup_invalid_crn(self):
         timetable = Timetable('201701')
@@ -30,7 +37,7 @@ class TestTimetable(TestCase):
     def test_crn_lookup_raises_timetable_exception(self, mock_post):
         timetable = Timetable('201701')
         mock_post.return_value.status_code = 404
-        with self.assertRaises(TimetableUnavailableException):
+        with self.assertRaises(TimetableError):
             timetable.crn_lookup('17583')
         self.assertEqual(2, timetable.sleep_time)
         self.assertNotIn('crn', timetable.base_request)
@@ -45,14 +52,14 @@ class TestTimetable(TestCase):
             data = t.parse_row(row)
             c = Section(crn='17583', code='STAT 4705', name='Statistics for Engr', lecture_type='L',
                         credits='3', capacity='60', instructor='GR Terrell',
-                        days='TR', start_time='9:30AM', end_time='10:45AM', location='WMS 220', exam_type='09T')
+                        days='T R', start_time='9:30AM', end_time='10:45AM', location='WMS 220', exam_type='09T')
             self.assertEqual(c, data)
 
 
-class TestTimetableException(TestCase):
+class TestTimetableError(TestCase):
 
     def setUp(self):
-        self.e = TimetableUnavailableException("Test", 1)
+        self.e = TimetableError("Test", 1)
 
     def test_timetable_unavailable_message(self):
         self.assertEqual("Test", str(self.e))

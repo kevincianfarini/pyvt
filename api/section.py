@@ -14,6 +14,8 @@ class Section:
 
     def __eq__(self, other):
         if isinstance(other, Section):
+            s = self.__dict__
+            o = other.__dict__
             return self.__dict__ == other.__dict__
         return False
 
