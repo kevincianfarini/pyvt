@@ -19,7 +19,7 @@ class Timetable:
     def __init__(self, term_year):
         self.url = 'https://banweb.banner.vt.edu/ssb/prod/HZSKVTSC.P_ProcRequest'
         self.sleep_time = 1
-        self.base_request = {
+        self.base_request = { #base required request data
             'BTN_PRESSED': 'FIND class sections',
             'TERMYEAR': term_year,
             'CAMPUS': '0', #blacksburg campus
