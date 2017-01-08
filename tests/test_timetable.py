@@ -12,13 +12,13 @@ class TestTimetableParsing(TestCase):
 
     @patch('api.timetable.Timetable.parse_row')
     def test_parse_table_single_entry(self, mock_row):
-        with open('../test_data/test_crn_request_table.html', 'r') as file:
+        with open('./test_data/test_crn_request_table.html', 'r') as file:
             bs = BeautifulSoup(file.read(), 'html.parser')
             self.timetable.parse_table(bs)
             mock_row.assert_called_once()
 
     def test_parse_row_simple(self):
-        with open('../test_data/test_row.html', 'r') as file:
+        with open('./test_data/test_row.html', 'r') as file:
             row = BeautifulSoup(file.read(), 'html.parser')
             data = self.timetable.parse_row(row)
             c = Section(crn='17583', code='STAT 4705', name='Statistics for Engr', lecture_type='L',
@@ -35,7 +35,7 @@ class TestTimetableCrnLookup(TestCase):
     @patch('requests.post')
     @patch('api.timetable.Timetable.parse_table')
     def test_crn_lookup_simple(self, mock_table, mock_post):
-        with open('../test_data/test_crn_request_no_open_sections.html', 'r') as file:
+        with open('./test_data/test_crn_request_no_open_sections.html', 'r') as file:
             mock_post.return_value.status_code = 200
             mock_post.return_value.content = file.read()
             mock_table.return_value = []
@@ -45,7 +45,7 @@ class TestTimetableCrnLookup(TestCase):
     @patch('requests.post')
     @patch('api.timetable.Timetable.parse_table')
     def test_crn_lookup_open_only_false(self, mock_parse, mock_post):
-        with open('../test_data/test_crn_request_open_only_false.html', 'r') as file:
+        with open('./test_data/test_crn_request_open_only_false.html', 'r') as file:
             mock_post.return_value.status_code = 200
             mock_post.return_value.content = file.read()
             self.timetable.crn_lookup('17583', False)
