@@ -35,17 +35,13 @@ class Timetable:
         request_data = self.base_request.copy()
         request_data['crn'] = crn_code
         request_data['open_only'] = 'on' if open_only else ''
-        r = requests.post(self.url, data=request_data)
-        if r.status_code != 200:
-            self.sleep_time *= 2
-            raise TimetableError('The VT Timetable is down or the request was bad.',
-                                 self.sleep_time)
-        bs = BeautifulSoup(r.content, 'html.parser')
-        section = self.parse_table(bs.find('table', attrs={'class': 'dataentrytable'}))
-        return section[0] if len(section) == 1 else None
+        section = self._parse_table(self._make_request(request_data))
+        return None if section is None or len(section) == 0 else section[0]
 
-    def class_lookup(self, class_code, open_only=True):
-        pass
+    def class_lookup(self, subject_code, class_number, open_only=True):
+        request_data = self.base_request.copy()
+        request_data['subj_code'] = subject_code
+        request_data['CRSE_NUMBER'] = class_number
 
     def cle_lookup(self, cle_code, open_only=True):
         pass
@@ -53,14 +49,25 @@ class Timetable:
     def subject_lookup(self, subject_code, open_only=True):
         pass
 
-    def parse_row(self, row):
+    def _parse_row(self, row):
         entries = [entry.text.replace('\n', '').replace('-', ' ').strip() for entry in row.find_all('td')]
         return Section(**dict(zip(self.data_keys, entries)))
 
-    def parse_table(self, table):
+    def _parse_table(self, html):
+        table = html.find('table', attrs={'class': 'dataentrytable'})
+        if table is None:
+            return None
         rows = [row for row in table.find_all('tr') if row.attrs == {}]
-        sections = [self.parse_row(c) for c in rows]
+        sections = [self._parse_row(c) for c in rows]
         return sections
+
+    def _make_request(self, request_data):
+        r = requests.post(self.url, data=request_data)
+        if r.status_code != 200:
+            self.sleep_time *= 2
+            raise TimetableError('The VT Timetable is down or the request was bad.',
+                                 self.sleep_time)
+        return BeautifulSoup(r.content, 'html.parser')
 
 
 class TimetableError(Exception):
