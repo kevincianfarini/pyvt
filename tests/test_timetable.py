@@ -96,6 +96,34 @@ class TestTimetableLookups(TestCase):
         mock_parse.return_value = [Section(), Section()]
         self.assertEqual(2, len(self.timetable.refined_lookup('17583')))
 
+    @patch('api.timetable.Timetable.refined_lookup')
+    def test_crn_lookup_call_args(self, mock_lookup):
+        self.timetable.crn_lookup('17583', False)
+        args = {'crn_code': '17583', 'open_only': False}
+        mock_lookup.assert_called_once_with(**args)
+
+    @patch('api.timetable.Timetable.refined_lookup')
+    def test_crn_lookup_return_values(self, mock_lookup):
+        mock_lookup.return_value = None
+        self.assertIsNone(self.timetable.crn_lookup('17583'))
+        mock_lookup.return_value = [Section()]
+        self.assertTrue(isinstance(self.timetable.crn_lookup('17583'), Section))
+
+    @patch('api.timetable.Timetable.refined_lookup')
+    def test_class_lookup_args(self, mock_lookup):
+        self.timetable.class_lookup('STAT', '4705', False)
+        mock_lookup.assert_called_once_with(subject_code='STAT', class_number='4705', open_only=False)
+
+    @patch('api.timetable.Timetable.refined_lookup')
+    def test_cle_lookup_args(self, mock_lookup):
+        self.timetable.cle_lookup('AR01', False)
+        mock_lookup.assert_called_once_with(cle_code='AR01', open_only=False)
+
+    @patch('api.timetable.Timetable.refined_lookup')
+    def test_subject_lookup_args(self, mock_lookup):
+        self.timetable.subject_lookup('STAT', False)
+        mock_lookup.assert_called_once_with(subject_code='STAT', open_only=False)
+
 
 class TestTimetableError(TestCase):
 

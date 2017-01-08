@@ -19,7 +19,7 @@ class Timetable:
 
     def crn_lookup(self, crn_code, open_only=True):
         section = self.refined_lookup(crn_code=crn_code, open_only=open_only)
-        return None if section is None or len(section) == 0 else section[0]
+        return section[0] if section is not None else None
 
     def class_lookup(self, subject_code, class_number, open_only=True):
         return self.refined_lookup(subject_code=subject_code, class_number=class_number, open_only=open_only)
