@@ -59,52 +59,42 @@ class TestTimetableLookups(TestCase):
     def setUp(self):
         self.timetable = Timetable('201701')
 
-    def test_crn_lookup_bad_value(self):
+    def test_refined_lookup_raises_value_error(self):
         with self.assertRaises(ValueError):
-            self.timetable.crn_lookup('1')
+            self.timetable.refined_lookup(crn_code='17')
+        with self.assertRaises(ValueError):
+            self.timetable.refined_lookup(class_number='100')
+        with self.assertRaises(ValueError):
+            self.timetable.refined_lookup(class_number='1000')
 
     @patch('api.timetable.Timetable._make_request')
     @patch('api.timetable.Timetable._parse_table')
-    def test_crn_no_results(self, mock_parse, mock_request):
-        with open('./tests/test_data/test_crn_request_no_open_sections.html', 'r') as file:
-            bs = BeautifulSoup(file.read(), 'html.parser')
-            mock_request.return_value = bs
-            self.timetable.crn_lookup('17583')
-            mock_parse.assert_called_once_with(bs)
-
-    @patch('api.timetable.Timetable._parse_table')
-    @patch('requests.post')
-    def test_crn_returns_none(self, mock_post, mock_parse):
-        mock_parse.return_value = None
-        mock_post.return_value.status_code = 200
-        mock_post.return_value.content = '<html></html>'
-        self.assertIsNone(self.timetable.crn_lookup('17583'))
+    def test_refined_lookup_full_request(self, mock_parse, mock_request):
         mock_parse.return_value = []
-        self.assertIsNone(self.timetable.crn_lookup('17583'))
-
-    @patch('api.timetable.Timetable._parse_table')
-    @patch('requests.post')
-    def test_crn_returns_section(self, mock_post, mock_parse):
-        mock_parse.return_value = [Section(dummy='data')]
-        mock_post.return_value.status_code = 200
-        mock_post.return_value.content = '<html></html>'
-        self.assertEqual(Section(dummy='data'), self.timetable.crn_lookup('17583'))
+        mock_request.return_value = '<html></html>'
+        request = {'crn_code': '17583', 'subject_code': 'STAT', 'class_number': '4705',
+                   'cle_code': 'AR%'}
+        self.timetable.refined_lookup(**request)
+        called_request = {
+            'crn': '17583',
+            'subj_code': 'STAT',
+            'CRSE_NUMBER': '4705',
+            'CORE_CODE': 'AR%',
+            'open_only': 'on'
+        }
+        called_request.update(self.timetable.base_request)
+        mock_request.assert_called_once_with(called_request)
 
     @patch('api.timetable.Timetable._make_request')
     @patch('api.timetable.Timetable._parse_table')
-    def test_class_returns_multiple_sections(self, mock_parse, mock_request):
-        mock_request.return_value = BeautifulSoup('<html></html>', 'html.parser')
+    def test_refined_lookup_return_values(self, mock_parse, mock_request):
+        mock_parse.return_value = []
+        mock_request.return_value = ''
+        self.assertIsNone(self.timetable.refined_lookup(crn_code='17583'))
+        mock_parse.return_value = None
+        self.assertIsNone(self.timetable.refined_lookup(crn_code='17583'))
         mock_parse.return_value = [Section(), Section()]
-        self.assertEqual(2, len(self.timetable.class_lookup('STAT', '4705', False)))
-
-    @patch('api.timetable.Timetable._make_request')
-    @patch('api.timetable.Timetable._parse_table')
-    def test_class_lookup_returns_none(self, mock_parse, mock_request):
-        mock_request.return_value = BeautifulSoup('<html></html>', 'html.parser')
-        mock_parse.return_value = []
-        self.assertIsNone(self.timetable.class_lookup('blah', '1000'))
-        mock_parse.return_value = None
-        self.assertIsNone(self.timetable.class_lookup('blah', '1000'))
+        self.assertEqual(2, len(self.timetable.refined_lookup('17583')))
 
 
 class TestTimetableError(TestCase):
