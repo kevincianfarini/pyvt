@@ -42,6 +42,9 @@ class Timetable:
         request_data = self.base_request.copy()
         request_data['subj_code'] = subject_code
         request_data['CRSE_NUMBER'] = class_number
+        request_data['open_only'] = 'on' if open_only else ''
+        sections = self._parse_table(self._make_request(request_data))
+        return None if sections is None or len(sections) == 0 else sections
 
     def cle_lookup(self, cle_code, open_only=True):
         pass

@@ -24,6 +24,13 @@ class TestTimetableHelpers(TestCase):
             self.assertIsNone(self.timetable._parse_table(table))
             mock_row.assert_not_called()
 
+    @patch('api.timetable.Timetable._parse_row')
+    def test_parse_table_multiple_results(self, mock_row):
+        with open('./tests/test_data/test_class_lookup_multiple_results.html', 'r') as file:
+            html = BeautifulSoup(file.read(), 'html.parser')
+            self.timetable._parse_table(html)
+            self.assertEqual(3, mock_row.call_count)
+
     def test_parse_row_simple(self):
         with open('./tests/test_data/test_row.html', 'r') as file:
             row = BeautifulSoup(file.read(), 'html.parser')
@@ -82,6 +89,22 @@ class TestTimetableLookups(TestCase):
         mock_post.return_value.status_code = 200
         mock_post.return_value.content = '<html></html>'
         self.assertEqual(Section(dummy='data'), self.timetable.crn_lookup('17583'))
+
+    @patch('api.timetable.Timetable._make_request')
+    @patch('api.timetable.Timetable._parse_table')
+    def test_class_returns_multiple_sections(self, mock_parse, mock_request):
+        mock_request.return_value = BeautifulSoup('<html></html>', 'html.parser')
+        mock_parse.return_value = [Section(), Section()]
+        self.assertEqual(2, len(self.timetable.class_lookup('STAT', '4705', False)))
+
+    @patch('api.timetable.Timetable._make_request')
+    @patch('api.timetable.Timetable._parse_table')
+    def test_class_lookup_returns_none(self, mock_parse, mock_request):
+        mock_request.return_value = BeautifulSoup('<html></html>', 'html.parser')
+        mock_parse.return_value = []
+        self.assertIsNone(self.timetable.class_lookup('blah', '1000'))
+        mock_parse.return_value = None
+        self.assertIsNone(self.timetable.class_lookup('blah', '1000'))
 
 
 class TestTimetableError(TestCase):
