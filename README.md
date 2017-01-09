@@ -8,7 +8,7 @@ A Virginia Tech Timetable of Classes Python API
 ### Installation
 
 ```shell
-pip install pyvt
+pip install py-vt
 ```
 
 ### Usage
