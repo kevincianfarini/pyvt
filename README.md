@@ -8,12 +8,17 @@ A Virginia Tech Timetable of Classes Python API
 ### Installation
 
 ```shell
-pip install py_vt
+pip install py-vt
 ```
 
 ### Usage
 
-The API provides access to the Timetable through a Timetable object that is instanciated with a term year.
+Import the Timetable
+```python
+from pyvt.timetable import Timetable
+```
+
+The API provides access to the Timetable through a Timetable object that is instantiated with a term year.
 
 ```python
 timetable = Timetable('201701')  # Spring semester of 2017
@@ -63,3 +68,28 @@ More refined searches can be accomplished using the ```refined_lookup(...)``` me
 ```python
 def refined_lookup(self, crn_code=None, subject_code=None, class_number=None, cle_code=None, open_only=True):
 ```
+
+### Usage Codes
+
+Some of the codes that need to be used with this API are solely to satisfy the needs of the VT Timetable posts. Some helpful codes are as follows.
+
+```python
+len(cen_code) >= 3
+
+subj_codes = [
+    'STAT',
+    'MATH',
+    'CS',
+    'ECE',
+    ...
+]
+
+len(class_number) == 4
+
+cle_codes = {
+    'AR%': 'All Curriculums',
+    'AR01': 'Area 1 Classes',
+    'AR02': 'Area 2 Classes',
+    ...
+    'AR07': Area 7 Classes
+}
