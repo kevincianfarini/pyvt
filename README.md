@@ -58,9 +58,9 @@ Some of the other most commonly used lookup methods are as follows:
 def crn_lookup(self, crn_code, open_only=True):
     ...
 ```
-```crn_lookup(...)``` will return either a single ```Section(...)``` object or None depending on the success of the query. None is returned if there were no available class sections based of the arguments.
+```crn_lookup(...)``` will return either a single ```Section(...)``` object or ```None``` depending on the success of the query. None is returned if there were no available class sections based of the arguments.
 
-The following methods return either a list of ```Section(...)``` objects or None depending on the success of the query.
+The following methods return either a list of ```Section(...)``` objects or ```None``` depending on the success of the query.
 
 ```python
 def class_lookup(self, subject_code, class_number, open_only=True):
@@ -68,7 +68,6 @@ def class_lookup(self, subject_code, class_number, open_only=True):
 
 def cle_lookup(self, cle_code, open_only=True):
     ...
-
 
 def subject_lookup(self, subject_code, open_only=True):
     ...
@@ -85,7 +84,7 @@ def refined_lookup(self, crn_code=None, subject_code=None, class_number=None, cl
 Some of the codes that need to be used with this API are solely to satisfy the needs of the VT Timetable posts. Some helpful codes are as follows.
 
 ```python
-len(cen_code) >= 3
+len(crn_code) >= 3
 
 subj_codes = [
     'STAT',
@@ -102,7 +101,7 @@ cle_codes = {
     'AR01': 'Area 1 Classes',
     'AR02': 'Area 2 Classes',
     ...
-    'AR07': Area 7 Classes
+    'AR07': 'Area 7 Classes'
 }
 ```
 
@@ -118,7 +117,7 @@ Either a single section object or a list of section objects will be returned to 
 
 ### The TimetableError
 
-A Timetable error is thrown when either a bad request is made or the VT Timetable is down. In effect, when the status code of the request is not 200. The thrown error can be used to try and gracefully fail to an extent. The TimetableError provides a ```sleep_time``` attribute to allow for programming pausing.
+A Timetable error is thrown when either a bad request is made or the VT Timetable is down. In effect, when the status code of the request is not 200. The thrown error can be used to try and gracefully fail to an extent. The TimetableError provides a ```sleep_time``` attribute to allow for a runtime pause.
 
 ```python
 try:
@@ -127,4 +126,4 @@ except TimetableError as e:
     time.sleep(e.sleep_time)
 ```
 
-The idea behind this is that if the request was bad, your code will sleep for a short amount of time. However if the VT Timetable is down, and multiple successive ```TimetableErrors``` are raised, then ```sleep_time``` grows exponentially to avoid overwhelming the server.
+The idea behind this is that if the request was bad, your program will sleep for a short amount of time. However if the VT Timetable is down, and multiple successive ```TimetableErrors``` are raised, then ```sleep_time``` grows exponentially to avoid overwhelming the server.
