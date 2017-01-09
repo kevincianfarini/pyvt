@@ -3,6 +3,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/kevincianfarini/pyvt/badge.svg?branch=master)](https://coveralls.io/github/kevincianfarini/pyvt?branch=master)
 [![Build Status](https://travis-ci.org/kevincianfarini/pyvt.svg?branch=master)](https://travis-ci.org/kevincianfarini/pyvt)
 
+
 A Virginia Tech Timetable of Classes Python API
 
 ### Installation
