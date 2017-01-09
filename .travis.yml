@@ -7,7 +7,7 @@ install:
   - pip install coveralls
 # command to run tests
 script:
-  coverage run --source=py_vt -m unittest discover -s tests -p "test_*.py"
+  coverage run --source=pyvt -m unittest discover -s tests -p "test_*.py"
 branches:
   only:
   - master

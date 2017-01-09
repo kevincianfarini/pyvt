@@ -1,11 +1,11 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='py_vt',
+    name='py-vt',
     description='A Python API for the Virginia Tech Timetable of Classes',
     version='0.0.1',
     classifiers=[
-        'License :: MIT',
+        'License :: OSI Approved :: MIT License',
         'Programming Language :: Python :: 3.6'
     ],
     keywords='Virgina Tech Timetable API',

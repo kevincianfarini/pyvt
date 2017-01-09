@@ -1,6 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
-from py_vt.section import Section
+from pyvt.section import Section
 
 
 class Timetable:
