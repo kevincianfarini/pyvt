@@ -54,7 +54,7 @@ def class_lookup(self, subject_code, class_number, open_only=True):
 def cle_lookup(self, cle_code, open_only=True):
     ...
 
-ef subject_lookup(self, subject_code, open_only=True):
+def subject_lookup(self, subject_code, open_only=True):
     ...
 ```
 
