@@ -54,11 +54,21 @@ All methods of the timetable provide a defualt argument of ```open_only=True``` 
 Some of the other most commonly used lookup methods are as follows:
 
 ```python
+
+def crn_lookup(self, crn_code, open_only=True):
+    ...
+```
+```crn_lookup(...)``` will return either a single ```Section(...)``` object or None depending on the success of the query. None is returned if there were no available class sections based of the arguments.
+
+The following methods return either a list of ```Section(...)``` objects or None depending on the success of the query.
+
+```python
 def class_lookup(self, subject_code, class_number, open_only=True):
     ...
 
 def cle_lookup(self, cle_code, open_only=True):
     ...
+
 
 def subject_lookup(self, subject_code, open_only=True):
     ...
@@ -94,3 +104,26 @@ cle_codes = {
     ...
     'AR07': Area 7 Classes
 }
+
+### The Section Object
+
+Class sections returned from the timetable come in the form of a ```Section()``` object. All Section objects have the follows properties:
+
+```python
+section_attrs = ['crn', 'code', 'name', 'lecture_type', 'credits', 'capacity', 'instructor', 'days', 'start_time', 'end_time', 'location', 'exam_type']
+```
+
+Either a single section object or a list of section objects will be returned to you upon a successful query to the VT Timetable. You can access information about class sections from the above attributes.
+
+### The TimetableError
+
+A Timetable error is thrown when either a bad request is made or the VT Timetable is down. In effect, when the status code of the request is not 200. The thrown error can be used to try and gracefully fail to an extent. The TimetableError provides a ```sleep_time``` attribute to allow for programming pausing.
+
+```python
+try:
+    timetable.crn_lookup(...)
+except TimetableError as e:
+    time.sleep(e.sleep_time)
+```
+
+The idea behind this is that if the request was bad, your code will sleep for a short amount of time. However if the VT Timetable is down, and multiple successive ```TimetableErrors``` are raised, then ```sleep_time``` grows exponentially to avoid overwhelming the server.

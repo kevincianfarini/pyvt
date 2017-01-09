@@ -5,6 +5,7 @@ from pyvt.section import Section
 
 class Timetable:
 
+
     def __init__(self, term_year):
         self.url = 'https://banweb.banner.vt.edu/ssb/prod/HZSKVTSC.P_ProcRequest'
         self.sleep_time = 1
@@ -67,6 +68,7 @@ class Timetable:
             self.sleep_time *= 2
             raise TimetableError('The VT Timetable is down or the request was bad.',
                                  self.sleep_time)
+        self.sleep_time = 1
         return BeautifulSoup(r.content, 'html.parser')
 
 
