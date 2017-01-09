@@ -1,5 +1,5 @@
 from unittest import TestCase
-from api.section import Section
+from py_vt.section import Section
 
 
 class TestClass(TestCase):
