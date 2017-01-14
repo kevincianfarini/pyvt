@@ -64,6 +64,16 @@ class TestTimetableHelpers(TestCase):
         mock_date.today.return_value.month = 3
         self.assertEqual('201701', self.timetable._default_term_year)
 
+    @patch('requests.post')
+    def test_timetable_error_growth(self, mock_post):
+        mock_post.return_value.status_code = 404
+        for i in range(10):
+            try:
+                self.timetable._make_request({'dummy': 'data'})
+            except TimetableError:
+                continue
+        self.assertEqual(1024, self.timetable.sleep_time)
+
 
 class TestTimetableLookups(TestCase):
 
