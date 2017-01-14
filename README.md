@@ -125,6 +125,8 @@ Either a single section object or a list of section objects will be returned to 
 A Timetable error is thrown when either a bad request is made or the VT Timetable is down. In effect, when the status code of the request is not 200. The thrown error can be used to try and gracefully fail to an extent. The TimetableError provides a ```sleep_time``` attribute to allow for a runtime pause.
 
 ```python
+from pyvt import TimetableError
+
 try:
     timetable.crn_lookup(...)
 except TimetableError as e:
