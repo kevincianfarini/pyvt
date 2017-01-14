@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 setup(
     name='py-vt',
     description='A Python API for the Virginia Tech Timetable of Classes',
-    version='0.0.2',
+    version='0.0.3',
     classifiers=[
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python :: 3.6'
