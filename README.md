@@ -16,46 +16,34 @@ pip install py-vt
 
 Import the Timetable
 ```python
-from pyvt.timetable import Timetable
+from pyvt import Timetable
 ```
 
-The API provides access to the Timetable through a Timetable object that is instantiated with a term year.
+The API provides access to the Timetable through a Timetable object.
 
 ```python
-timetable = Timetable('201701')  # Spring semester of 2017
-```
-
-Other term years follow a simple pattern: YYYYMM of start of semester
-
-```python
-termyears = {
-    'Spring 2017': '201701',
-    'Summer I 2017': '201706',
-    'Summer II 2017': '201707',
-    'Fall 2017': '201708',
-    ...
-}
+timetable = Timetable()
 ```
 
 The timetable object provides some useful methods for pulling data from the VT Timetable.
 
 ```python
-timetable.crn_lookup('17583', open_only=False)
+timetable.crn_lookup('17583', term_year='201701' open_only=False)
 ```
 
-returns the class section object from the timetable with the CRN 17583, regardless of whether or not the class is full to capacity. Alternatively if you would like to only find sections that are open:
+returns the class section object from the timetable with the CRN 17583 in the term year `201701`, regardless of whether or not the class is full to capacity. Alternatively if you would like to only find sections that are open:
 
 ```python
-timetable.crn_lookup('17583')
+timetable.crn_lookup('17583', term_year='201701')
 ```
 
-All methods of the timetable provide a defualt argument of ```open_only=True``` when making timetable requests.
+All methods of the timetable provide a default argument of ```open_only=True``` and ```term_year=None``` when making timetable requests. Upon a lookup, if term year is None it will be defaulted to the most recent term year. There is more on this in the Term Year section.
 
 Some of the other most commonly used lookup methods are as follows:
 
 ```python
 
-def crn_lookup(self, crn_code, open_only=True):
+def crn_lookup(self, crn_code, term_year=None, open_only=True):
     ...
 ```
 ```crn_lookup(...)``` will return either a single ```Section(...)``` object or ```None``` depending on the success of the query. None is returned if there were no available class sections based of the arguments.
@@ -63,20 +51,20 @@ def crn_lookup(self, crn_code, open_only=True):
 The following methods return either a list of ```Section(...)``` objects or ```None``` depending on the success of the query.
 
 ```python
-def class_lookup(self, subject_code, class_number, open_only=True):
+def class_lookup(self, subject_code, class_number, term_year=None, open_only=True):
     ...
 
-def cle_lookup(self, cle_code, open_only=True):
+def cle_lookup(self, cle_code, term_year=None, open_only=True):
     ...
 
-def subject_lookup(self, subject_code, open_only=True):
+def subject_lookup(self, subject_code, term_year=None, open_only=True):
     ...
 ```
 
 More refined searches can be accomplished using the ```refined_lookup(...)``` method
 
 ```python
-def refined_lookup(self, crn_code=None, subject_code=None, class_number=None, cle_code=None, open_only=True):
+def refined_lookup(self, crn_code=None, subject_code=None, class_number=None, cle_code=None, term_year=None, open_only=True):
 ```
 
 ### Usage Codes
@@ -102,6 +90,23 @@ cle_codes = {
     'AR02': 'Area 2 Classes',
     ...
     'AR07': 'Area 7 Classes'
+}
+```
+
+### The Term Years
+
+The Virginia Tech Timetable offers class section lookups for specific term years. If you would like to work with the current term year, you can leave ```term_year=None``` untouched in the timetable method calls. Upon making the request, the term year will be defaulted to be the most recent term year.
+Term years happen each year in the months August, January, June, and July. A default term year call in March would result in returning class sections for the last active term year, which is in January. The Spring semester. This is to avoid making calls to the VT Timetable with term years that are not yet available.
+
+Alternatively, if you know that a certain term year is available but not the default, you can pass in a term year to the lookup methods. Term years follow a simple YYYYMM pattern as shown:
+
+```python
+term_years = {
+    'Spring 2017':      '201701',
+    'Summer I 2017',    '201706',
+    'Summer II 2017',   '201707',
+    'Fall 2017',        '201708',
+    ...
 }
 ```
 
