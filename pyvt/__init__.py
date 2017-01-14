@@ -5,33 +5,43 @@ from bs4 import BeautifulSoup
 
 class Timetable:
 
-    def __init__(self, term_year):
+    def __init__(self):
         self.url = 'https://banweb.banner.vt.edu/ssb/prod/HZSKVTSC.P_ProcRequest'
         self.sleep_time = 1
         self.base_request = {  # base required request data
             'BTN_PRESSED': 'FIND class sections',
-            'TERMYEAR': term_year,
             'CAMPUS': '0',  # blacksburg campus
             'SCHDTYPE': '%'
         }
         self.data_keys = ['crn', 'code', 'name', 'lecture_type', 'credits', 'capacity',
                           'instructor', 'days', 'start_time', 'end_time', 'location', 'exam_type']
 
-    def crn_lookup(self, crn_code, open_only=True):
-        section = self.refined_lookup(crn_code=crn_code, open_only=open_only)
+    @property
+    def _default_term_year(self):
+        term_months = [1, 6, 7, 8]  # Spring, Summer I, Summer II, Fall
+        current_year = datetime.today().year
+        current_month = datetime.today().month
+        term_month = max(key for key in term_months if key <= current_month)
+        return '%d%s' % (current_year, str(term_month).zfill(2))
+
+    def crn_lookup(self, crn_code, term_year=None, open_only=True):
+        section = self.refined_lookup(crn_code=crn_code, term_year=term_year, open_only=open_only)
         return section[0] if section is not None else None
 
-    def class_lookup(self, subject_code, class_number, open_only=True):
-        return self.refined_lookup(subject_code=subject_code, class_number=class_number, open_only=open_only)
+    def class_lookup(self, subject_code, class_number, term_year=None, open_only=True):
+        return self.refined_lookup(subject_code=subject_code, class_number=class_number,
+                                   term_year=term_year, open_only=open_only)
 
-    def cle_lookup(self, cle_code, open_only=True):
-        return self.refined_lookup(cle_code=cle_code, open_only=open_only)
+    def cle_lookup(self, cle_code, term_year=None, open_only=True):
+        return self.refined_lookup(cle_code=cle_code, term_year=term_year, open_only=open_only)
 
-    def subject_lookup(self, subject_code, open_only=True):
-        return self.refined_lookup(subject_code=subject_code, open_only=open_only)
+    def subject_lookup(self, subject_code, term_year=None, open_only=True):
+        return self.refined_lookup(subject_code=subject_code, term_year=term_year, open_only=open_only)
 
-    def refined_lookup(self, crn_code=None, subject_code=None, class_number=None, cle_code=None, open_only=True):
+    def refined_lookup(self, crn_code=None, subject_code=None, class_number=None, cle_code=None,
+                       term_year=None, open_only=True):
         request_data = self.base_request.copy()
+        request_data['TERMYEAR'] = term_year if term_year is not None else self._default_term_year
         if crn_code is not None:
             if len(crn_code) < 3:
                 raise ValueError('Invalid CRN: must be longer than 3 characters')
@@ -69,14 +79,6 @@ class Timetable:
                                  self.sleep_time)
         self.sleep_time = 1
         return BeautifulSoup(r.content, 'html.parser')
-
-    @property
-    def _default_term_year(self):
-        term_months = [1, 6, 7, 8]
-        current_year = datetime.today().year
-        current_month = datetime.today().month
-        term_month = max(key for key in term_months if key <= current_month)
-        return '%d%s' % (current_year, str(term_month).zfill(2))
 
 
 class TimetableError(Exception):

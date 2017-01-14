@@ -7,7 +7,7 @@ from pyvt import Timetable, TimetableError, Section
 class TestTimetableHelpers(TestCase):
 
     def setUp(self):
-        self.timetable = Timetable('201701')
+        self.timetable = Timetable()
 
     @patch('pyvt.Timetable._parse_row')
     def test_parse_table_single_entry(self, mock_row):
@@ -52,15 +52,23 @@ class TestTimetableHelpers(TestCase):
         mock_post.return_value.status_code = 200
         self.assertTrue(isinstance(self.timetable._make_request({'dummy': 'data'}), BeautifulSoup))
 
-    def test_date(self):
-        foo = self.timetable._default_term_year
-        print(foo)
+    @patch('pyvt.datetime')
+    def test_default_term_year(self, mock_date):
+        mock_date.today.return_value.year = 2017
+        mock_date.today.return_value.month = 1
+        self.assertEqual('201701', self.timetable._default_term_year)
+
+    @patch('pyvt.datetime')
+    def test_default_term_year_in_between_terms(self, mock_date):
+        mock_date.today.return_value.year = 2017
+        mock_date.today.return_value.month = 3
+        self.assertEqual('201701', self.timetable._default_term_year)
 
 
 class TestTimetableLookups(TestCase):
 
     def setUp(self):
-        self.timetable = Timetable('201701')
+        self.timetable = Timetable()
 
     def test_refined_lookup_raises_value_error(self):
         with self.assertRaises(ValueError):
@@ -83,7 +91,8 @@ class TestTimetableLookups(TestCase):
             'subj_code': 'STAT',
             'CRSE_NUMBER': '4705',
             'CORE_CODE': 'AR%',
-            'open_only': 'on'
+            'open_only': 'on',
+            'TERMYEAR': '201701'
         }
         called_request.update(self.timetable.base_request)
         mock_request.assert_called_once_with(called_request)
@@ -101,8 +110,8 @@ class TestTimetableLookups(TestCase):
 
     @patch('pyvt.Timetable.refined_lookup')
     def test_crn_lookup_call_args(self, mock_lookup):
-        self.timetable.crn_lookup('17583', False)
-        args = {'crn_code': '17583', 'open_only': False}
+        self.timetable.crn_lookup('17583', None, False)
+        args = {'crn_code': '17583', 'open_only': False, 'term_year': None}
         mock_lookup.assert_called_once_with(**args)
 
     @patch('pyvt.Timetable.refined_lookup')
@@ -114,18 +123,18 @@ class TestTimetableLookups(TestCase):
 
     @patch('pyvt.Timetable.refined_lookup')
     def test_class_lookup_args(self, mock_lookup):
-        self.timetable.class_lookup('STAT', '4705', False)
-        mock_lookup.assert_called_once_with(subject_code='STAT', class_number='4705', open_only=False)
+        self.timetable.class_lookup('STAT', '4705', None, False)
+        mock_lookup.assert_called_once_with(subject_code='STAT', class_number='4705', term_year=None, open_only=False)
 
     @patch('pyvt.Timetable.refined_lookup')
     def test_cle_lookup_args(self, mock_lookup):
-        self.timetable.cle_lookup('AR01', False)
-        mock_lookup.assert_called_once_with(cle_code='AR01', open_only=False)
+        self.timetable.cle_lookup('AR01', None, False)
+        mock_lookup.assert_called_once_with(cle_code='AR01', term_year=None, open_only=False)
 
     @patch('pyvt.Timetable.refined_lookup')
     def test_subject_lookup_args(self, mock_lookup):
-        self.timetable.subject_lookup('STAT', False)
-        mock_lookup.assert_called_once_with(subject_code='STAT', open_only=False)
+        self.timetable.subject_lookup('STAT', None, False)
+        mock_lookup.assert_called_once_with(subject_code='STAT', term_year=None, open_only=False)
 
 
 class TestTimetableError(TestCase):
