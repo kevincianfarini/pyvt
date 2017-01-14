@@ -74,6 +74,15 @@ class TestTimetableHelpers(TestCase):
                 continue
         self.assertEqual(1024, self.timetable.sleep_time)
 
+    @patch('requests.post')
+    def test_timetable_error_thrown_message(self, mock_post):
+        mock_post.return_value.status_code = 404
+        try:
+            self.timetable._make_request({'dummy': 'data'})
+        except TimetableError as e:
+            self.assertEqual('The VT Timetable is down or the request was bad. Status Code was: 404'
+                             , str(e))
+
 
 class TestTimetableLookups(TestCase):
 

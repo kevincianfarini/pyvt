@@ -75,8 +75,8 @@ class Timetable:
         r = requests.post(self.url, data=request_data)
         if r.status_code != 200:
             self.sleep_time *= 2
-            raise TimetableError('The VT Timetable is down or the request was bad.',
-                                 self.sleep_time)
+            raise TimetableError('The VT Timetable is down or the request was bad. Status Code was: %d'
+                                 % r.status_code, self.sleep_time)
         self.sleep_time = 1
         return BeautifulSoup(r.content, 'html.parser')
 
