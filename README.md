@@ -104,9 +104,9 @@ Alternatively, if you know that a certain term year is available but not the def
 ```python
 term_years = {
     'Spring 2017':      '201701',
-    'Summer I 2017',    '201706',
-    'Summer II 2017',   '201707',
-    'Fall 2017',        '201708',
+    'Summer I 2017':    '201706',
+    'Summer II 2017':   '201707',
+    'Fall 2017':        '201708',
     ...
 }
 ```
