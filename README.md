@@ -29,7 +29,7 @@ timetable = Timetable()
 The timetable object provides some useful methods for pulling data from the VT Timetable.
 
 ```python
-timetable.crn_lookup('17583', term_year='201701' open_only=False)
+timetable.crn_lookup('17583', term_year='201701', open_only=False)
 ```
 
 returns the class section object from the timetable with the CRN 17583 in the term year `201701`, regardless of whether or not the class is full to capacity. Alternatively if you would like to only find sections that are open:
