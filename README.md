@@ -2,6 +2,7 @@
 
 [![Coverage Status](https://coveralls.io/repos/github/kevincianfarini/pyvt/badge.svg?branch=master)](https://coveralls.io/github/kevincianfarini/pyvt?branch=master)
 [![Build Status](https://travis-ci.org/kevincianfarini/pyvt.svg?branch=master)](https://travis-ci.org/kevincianfarini/pyvt)
+[![PyPI version](https://badge.fury.io/py/py-vt.svg)](https://badge.fury.io/py/py-vt)
 
 
 A Virginia Tech Timetable of Classes Python API
@@ -28,7 +29,7 @@ timetable = Timetable()
 The timetable object provides some useful methods for pulling data from the VT Timetable.
 
 ```python
-timetable.crn_lookup('17583', term_year='201701' open_only=False)
+timetable.crn_lookup('17583', term_year='201701', open_only=False)
 ```
 
 returns the class section object from the timetable with the CRN 17583 in the term year `201701`, regardless of whether or not the class is full to capacity. Alternatively if you would like to only find sections that are open:
@@ -103,9 +104,9 @@ Alternatively, if you know that a certain term year is available but not the def
 ```python
 term_years = {
     'Spring 2017':      '201701',
-    'Summer I 2017',    '201706',
-    'Summer II 2017',   '201707',
-    'Fall 2017',        '201708',
+    'Summer I 2017':    '201706',
+    'Summer II 2017':   '201707',
+    'Fall 2017':        '201708',
     ...
 }
 ```
