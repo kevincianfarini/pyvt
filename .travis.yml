@@ -5,10 +5,6 @@ install:
   - pip install -r requirements.txt
   - pip install coveralls
 script: coverage run --source=pyvt -m unittest discover -s tests -p "test_*.py"
-branches:
-  only:
-  - master
-  - dev
 after_success: coveralls
 deploy:
   provider: pypi
