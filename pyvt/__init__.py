@@ -114,4 +114,4 @@ class Section:
         return str(self)
 
     def __hash__(self):
-        return hash(str(self))
+        return int(getattr(self, 'crn'))

@@ -156,6 +156,18 @@ class TestTimetableLookups(TestCase):
         mock_lookup.assert_called_once_with(subject_code='STAT', term_year=None, open_only=False)
 
 
+class TestSection(TestCase):
+
+    def setUp(self):
+        self.section = Section(crn='17583', code='STAT 4705', name='Statistics for Engr', lecture_type='L',
+                               credits='3', capacity='60', instructor='GR Terrell',
+                               days='T R', start_time='9:30AM', end_time='10:45AM', location='WMS 220',
+                               exam_type='09T')
+
+    def test_section_hash(self):
+        self.assertEqual(17583, hash(self.section))
+
+
 class TestTimetableError(TestCase):
 
     def setUp(self):
