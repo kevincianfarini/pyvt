@@ -169,10 +169,10 @@ class TestSection(TestCase):
                                 days='T R', start_time='9:30AM', end_time='10:45AM', location='WMS 220',
                                 exam_type='09T')
 
-        self.section3 = Section(crn='17584', code='STAT 4705', name='Statistics for Engr', lecture_type='L',
-                                credits='3', capacity='60', instructor='GR Terrell',
-                                days='T R', start_time='9:30AM', end_time='10:45AM', location='WMS 220',
-                                exam_type='09T')
+        self.section3 = Section(crn='17584', code='MATH 2214', name='Intro Diff Equations', lecture_type='L',
+                                credits='3', capacity='66', instructor='ER Rappold',
+                                days='M W', start_time='4:00PM', end_time='5:15PM', location='GOODW 135',
+                                exam_type='CTE')
 
     def test_section_str(self):
         self.assertEqual("Statistics for Engr (17583) on T R at (9:30AM, 10:45AM)", str(self.section1))
@@ -187,7 +187,7 @@ class TestSection(TestCase):
         self.assertNotEqual("Junk", self.section1)
 
     def test_section_repr(self):
-        self.assertEqual("Statistics for Engr (17583) on T R at (9:30AM, 10:45AM)", repr(self.section1))
+        self.assertEqual("Intro Diff Equations (17584) on M W at (4:00PM, 5:15PM)", repr(self.section3))
 
     def test_section_hash(self):
         self.assertEqual(17583, hash(self.section1))
