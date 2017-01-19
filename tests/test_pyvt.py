@@ -159,13 +159,38 @@ class TestTimetableLookups(TestCase):
 class TestSection(TestCase):
 
     def setUp(self):
-        self.section = Section(crn='17583', code='STAT 4705', name='Statistics for Engr', lecture_type='L',
+        self.section1 = Section(crn='17583', code='STAT 4705', name='Statistics for Engr', lecture_type='L',
                                credits='3', capacity='60', instructor='GR Terrell',
                                days='T R', start_time='9:30AM', end_time='10:45AM', location='WMS 220',
                                exam_type='09T')
 
+        self.section2 = Section(crn='17583', code='STAT 4705', name='Statistics for Engr', lecture_type='L',
+                                credits='3', capacity='60', instructor='GR Terrell',
+                                days='T R', start_time='9:30AM', end_time='10:45AM', location='WMS 220',
+                                exam_type='09T')
+
+        self.section3 = Section(crn='17584', code='STAT 4705', name='Statistics for Engr', lecture_type='L',
+                                credits='3', capacity='60', instructor='GR Terrell',
+                                days='T R', start_time='9:30AM', end_time='10:45AM', location='WMS 220',
+                                exam_type='09T')
+
+    def test_section_str(self):
+        self.assertEqual("Statistics for Engr (17583) on T R at (9:30AM, 10:45AM)", str(self.section1))
+
+    def test_section_eq(self):
+        self.assertEqual(self.section1, self.section2)
+
+    def test_section_ne1(self):
+        self.assertNotEqual(self.section1, self.section3)
+
+    def test_section_ne2(self):
+        self.assertNotEqual("Junk", self.section1)
+
+    def test_section_repr(self):
+        self.assertEqual("Statistics for Engr (17583) on T R at (9:30AM, 10:45AM)", repr(self.section1))
+
     def test_section_hash(self):
-        self.assertEqual(17583, hash(self.section))
+        self.assertEqual(17583, hash(self.section1))
 
 
 class TestTimetableError(TestCase):
