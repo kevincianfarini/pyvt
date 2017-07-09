@@ -98,7 +98,7 @@ class TimetableError(Exception):
         self.sleep_time = sleep_time
 
 
-class Section: 
+class Section:
 
     def __init__(self, **kwargs):
         self.__dict__.update(kwargs)
